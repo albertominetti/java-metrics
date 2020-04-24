@@ -28,7 +28,7 @@ public class BackgroundJob {
         randomSumService.runLong();
     }
 
-    @Scheduled(fixedDelay = 15_000)
+    @Scheduled(fixedDelay = 15_000, initialDelay = 10_000)
     public void callEndpoint() {
         String endpoint = endpoints.get(ThreadLocalRandom.current().nextInt(0, endpoints.size()));
 
