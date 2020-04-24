@@ -13,5 +13,5 @@ jobs:
           java-version: 11
     - name: Compile with Maven
       run: mvn -B -U compile
-    - name: Test (only Unit Tests)
-      run: mvn -B -U test
+    - name: Test
+      run: mvn -B -U test verify
