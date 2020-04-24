@@ -1,0 +1,22 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,info,health"
+
+spring:
+  application:
+    name: spring-boot-metrics
+  output:
+    ansi:
+      enabled: DETECT
+  main:
+    banner-mode: off
+
+logging:
+  pattern:
+    console: '%clr(%d{HH:mm:ss}){yellow} %clr([%-5.5thread]){magenta} %highlight(%-5.5level) %clr(%-30.30logger{10}){cyan} - %msg%n'
+  level:
+    root: INFO
+    org.springframework: WARN
+    it.minetti.demo: DEBUG
