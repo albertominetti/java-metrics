@@ -8,7 +8,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class DemoApplicationTests {
+class DemoApplicationTest {
 
     @Autowired
     WebTestClient webTestClient;
