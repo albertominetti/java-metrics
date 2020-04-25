@@ -84,3 +84,5 @@ Here the screenshot of the main dashboard preconfigured:
 * Grafana on Docker https://grafana.com/docs/grafana/latest/installation/docker/
 * Samples for Grafana provisioning https://github.com/cirocosta/sample-grafana
 * docker-compose https://docs.docker.com/compose/
+* Docker maven plugin by Spotify https://github.com/spotify/dockerfile-maven
+* docker-compose maven plugin https://github.com/dkanejs/docker-compose-maven-plugin
