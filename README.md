@@ -2,7 +2,7 @@
 
 ### Goal
 
-The purpose of this project is to find an elegant way to **metric** and **log** the duration of pieces of the code using the cross-cutting support of AOP.
+The purpose of this project is to find an elegant way to **metric** and **log** the duration of pieces of code using the cross-cutting support of AOP in an enterprise application and to visualize these data.
 
 ### Project structure
 
@@ -23,7 +23,7 @@ In the Java sources, the `RandomSumService` class contains two methods, both sum
 
 Every method can be enriched in this way just adding the custom annotation. More over the aspect is implicitly applied also to every public method of any class annotated by `@RestContoller`, this rule works combining several pointcut annotations that you can find in the aspect class.
 
-In the project, a scheduled job is present to automatically create metrics, and several rest end-point can be invoked manually to have more metrics.
+In the project, a `@Scheduled` job runs every few second to create new metrics, and several REST end-point can be invoked using the browser to have more data of metrics.
 
 ### Technologies for the Java component
 
@@ -37,26 +37,70 @@ The Java part of the project uses `Spring framework` with `spring-boot` that is 
 
 * You can compile, run and stop the three components using, respectively, `docker-compose build`, `docker-compose up` and `docker-compose stop`. Or you can rely on maven using `mvn docker-compose:build`, `mvn docker-compose:up` and `mvn docker-compose:stop`.
 
-> :warning: **before building the main Dockerfile**: Be very careful to have the spring-boot-metrics.jar in the target directory, this file is needed to create the docker image.
+> :warning: **before building the main Dockerfile** be careful that `target/` folder contains the spring-boot-metrics.jar, the Docker image needs it.
 
 Tip: during my experiments I found very useful this command
 
-    docker-compose down && docker-compose up --build -d
+```sh
+docker-compose down && docker-compose up --build -d
+```
 
 ### Useful links for testing the containers
 
 Depending on your docker-machine and docker-host you may need to vary the url of the following urls.
 
-    DOCKER_IP=192.168.99.100                  # this is my configuration
-    # the spring-boot application
-    curl $DOCKER_IP:8080/actuator/prometheus  # feed for prometheus
-    curl $DOCKER_IP:8080/run                  # launch the run() method
-    curl $DOCKER_IP:8080/hello                # returns a static text
-    curl $DOCKER_IP:8080/hi                   # randomly return 200 or 500
+```sh
+DOCKER_IP=192.168.99.100                  # this is my configuration
+# the spring-boot application
+curl $DOCKER_IP:8080/actuator/prometheus  # feed for prometheus
+curl $DOCKER_IP:8080/run                  # launch the run() method
+curl $DOCKER_IP:8080/hello                # returns a static text
+curl $DOCKER_IP:8080/hi                   # randomly return 200 or 500
+```
 
 The prometheus instance is running here: http://$DOCKER_IP:9090
 
 Grafana instance is running here: http://$DOCKER_IP:3000 , the default login is user `admin` and password `admin`
+
+### Logging of the spring-boot app
+
+Here you can see a snippet of the two methods of the main service:
+
+```java
+@Service
+public class RandomSumService {
+    @MetricAndLog
+    public BigInteger run() {
+        BigInteger total = Stream.generate(randomGen).limit(LENGTH).reduce(ONE, BigInteger::add);
+        log.info("BigInteger sum is {}", total);
+        return total;
+    }
+    
+    @MetricAndLog
+    public long runLong() {
+        long total = ThreadLocalRandom.current().longs(LENGTH).sum();
+        log.info("long sum is {}", total);
+        return total;
+    }
+}
+```
+    
+And the following is the generated log, at INFO level there is the proper log of the method, the aspect instead log with level DEBUG
+
+```
+18:09:32 [ing-1] DEBUG i.m.d.s.RandomSumService - method run starts...
+18:09:32 [ing-1] INFO  i.m.d.s.RandomSumService - BigInteger sum is 430791380
+18:09:32 [ing-1] DEBUG i.m.d.s.RandomSumService - ...method run ends [88168100ns]
+18:09:32 [ing-1] DEBUG i.m.d.s.RandomSumService - method runLong starts...
+18:09:32 [ing-1] INFO  i.m.d.s.RandomSumService - long sum is -3511027136360295571
+18:09:32 [ing-1] DEBUG i.m.d.s.RandomSumService - ...method runLong ends [208400ns]
+18:09:42 [ing-1] DEBUG i.m.d.s.RandomSumService - method run starts...
+18:09:42 [ing-1] INFO  i.m.d.s.RandomSumService - BigInteger sum is 428570777
+18:09:42 [ing-1] DEBUG i.m.d.s.RandomSumService - ...method run ends [93993600ns]
+18:09:42 [ing-1] DEBUG i.m.d.s.RandomSumService - method runLong starts...
+18:09:42 [ing-1] INFO  i.m.d.s.RandomSumService - long sum is -6426393585632790784
+18:09:42 [ing-1] DEBUG i.m.d.s.RandomSumService - ...method runLong ends [211100ns]
+```
 
 ### Prometheus
 
