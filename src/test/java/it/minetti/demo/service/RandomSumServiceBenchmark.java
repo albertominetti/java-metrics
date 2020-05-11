@@ -33,12 +33,12 @@ public class RandomSumServiceBenchmark {
         new Runner(opt).run();
     }
 
-    /*
+/*
 # JMH version: 1.23
 # VM version: JDK 11.0.7, Java HotSpot(TM) 64-Bit Server VM, 11.0.7+8-LTS
 
-Benchmark    [higher is better]      Mode  Cnt   Score   Error  Units
-RandomSumServiceBenchmark.run       thrpt    3  11,042 ± 2,444  ops/s
+Benchmark (higher is better)           Mode  Cnt   Score   Error  Units
+RandomSumServiceBenchmark.run         thrpt    3  11,042 ± 2,444  ops/s
 RandomSumServiceBenchmark.runClassic  thrpt    3  11,025 ± 3,032  ops/s
-     */
+*/
 }
