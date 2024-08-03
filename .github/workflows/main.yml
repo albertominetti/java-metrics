@@ -16,4 +16,4 @@ jobs:
     - name: Test
       run: mvn -B -U test verify
     - name: Create jar and prepare Docker image
-      run: mvn -B -U -DskupTests package
+      run: mvn -B -U -DskipTests package
